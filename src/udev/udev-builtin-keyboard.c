@@ -166,8 +166,11 @@ static void set_trackpoint_sensitivity(struct udev_device *dev, const char *valu
         /* The sensitivity sysfs attr belongs to the serio parent device */
         pdev = udev_device_get_parent_with_subsystem_devtype(dev, "serio", NULL);
         if (!pdev) {
-                log_warning("Failed to get serio parent for '%s'", udev_device_get_devnode(dev));
-                return;
+                pdev = udev_device_get_parent_with_subsystem_devtype(dev, "hid", NULL);
+                if (!pdev) {
+                        log_warning("Failed to get serio parent for '%s'", udev_device_get_devnode(dev));
+                        return;
+                }
         }
 
         r = safe_atoi(value, &val_i);
